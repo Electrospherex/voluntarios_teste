@@ -1,0 +1,102 @@
+{% extends "vol/base_admin.html" %}
+{% load l10n %}
+{% block title %}Painel de controle{% endblock title %}
+
+{% block content %}
+
+<h1 class="margin-bottom">Panorama atual</h1>
+
+{% if perms.vol.view_voluntario %}
+<h2><a href="{% url 'admin:vol_voluntario_changelist' %}">Voluntários</a></h2>
+{% else %}
+<h2>Voluntários</h2>
+{% endif %}
+<hr style="margin:0;"/>
+
+<h3>Aguardando revisão: <span style="margin-left:15px;">{% if total_vol %}<a href="{% url 'aprovacao_voluntarios' %}">{{ total_vol }}</a>{% else %}{{ total_vol }}{% endif %}</span></h3>
+
+<h3>Tempo que os voluntários precisam aguardar até a aprovação do cadastro:</h3>
+<p class="dica" style="font-weight: 300;">Nosso esforço é manter este número abaixo de 24h</p>
+<ul style="list-style-type: disc;">
+  <li><h3>Média histórica<span class="dica"><sup>[1]</sup></span>: <span style="margin-left:15px;">{{ tempo_vol }}h</span></h3></li>
+
+  <li><h3>Média dos últimos 7 dias: <span style="margin-left:15px;">{% if tempo_vol_recente %}{{ tempo_vol_recente }}h{% else %}-{% endif %}</span></h3></li>
+
+  <li><h3>Máximo nos últimos 7 dias: <span style="margin-left:15px;">{% if tempo_vol_max_recente %}{{ tempo_vol_max_recente }}h{% else %}-{% endif %}</span></h3></li>
+</ul>
+
+<h3>Cadastros revisados hoje: <span style="margin-left:15px;">{{ total_vol_dia }}</span></h3>
+<span class="dica">[<a href="{% url 'panorama_revisao_voluntarios' %}">dinâmica (dias e horários trabalhados)</a>]</span>
+<br/>
+<span class="dica">[<a href="{% url 'carga_revisao_voluntarios' %}">distribuição da carga de trabalho</a>]</span>
+
+<br/>
+<br/>
+
+<h2>Entidades</h2>
+<hr style="margin:0;"/>
+
+<h3>Aguardando revisão: <span style="margin-left:15px;">{% if total_ents and perms.vol.change_entidadeaguardandoaprovacao %}<a href="{% url 'revisao_entidades' %}">{{ total_ents }}</a>{% else %}{{ total_ents }}{% endif %}</span></h3>
+
+<h3>Cadastros revisados hoje: <span style="margin-left:15px;">{{ total_ents_dia }}</span></h3>
+
+<h3>Aguardando boas vindas: <span style="margin-left:15px;"><a href="{% url 'onboarding_entidades' %}">{{ total_onboarding }}</a></span></h3>
+
+<h3>Pendências em aberto: <span style="margin-left:15px;">{% if total_pendencias_ents and perms.vol.change_entidade %}<a href="{% url 'exibe_pendencias_entidades' %}">{{ total_pendencias_ents }}</a>{% else %}{{ total_pendencias_ents }}{% endif %}</span></h3>
+
+<h3>Problemas na Receita Federal: <span style="margin-left:15px;">{% if total_problemas_cnpj and perms.vol.change_entidade %}<a href="{% url 'exibe_entidades_com_problema_na_receita' %}">{{ total_problemas_cnpj }}</a>{% else %}{{ total_problemas_cnpj }}{% endif %}</span></h3>
+
+<br/>
+
+<h2>Histórico pessoal de atividades</h2>
+<hr style="margin:0;"/>
+
+<h3>Voluntários revisados <span class="dica"><sup>[1]</sup></span>: <span style="margin-left:15px;">{{ total_vol_pessoal }}</span></h3>
+
+{% if indice_revisao_vol_pessoal > 0.001 %}
+<h3>Participação na revisão de voluntários <span class="dica"><sup>[2]</sup></span>: <span style="margin-left:15px;">{% if indice_revisao_vol_pessoal > 1.0 %}{{ indice_revisao_vol_pessoal|floatformat:1 }}{% else %}{{ indice_revisao_vol_pessoal|floatformat:3 }}{% endif %}%</span></h3>
+{% endif %}
+
+<h3>Entidades revisadas <span class="dica"><sup>[3]</sup></span>: <span style="margin-left:15px;">{{ total_ents_pessoal }}</span></h3>
+
+<h3>E-mails descobertos de entidades: <span style="margin-left:15px;">{{ total_emails_descobertos }}</span></h3>
+
+{% for tarefa in tarefas %}
+  <br/>
+
+  <h2>Força tarefa: <a href="{% url 'exibe_tarefa' tarefa.codigo %}" target="_blank">{{ tarefa.tarefa }}</a> (progresso: {{ tarefa.progresso }}%){% if tarefa.orientacoes %}<a href="{{ tarefa.orientacoes.get_url }}" title="orientações"><i class="fas fa-info-circle" style="color: #CCCCCC;"></i></a>{% endif %}</h2>
+  <hr style="margin:0;"/>
+  {% localize off %}
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="{{ tarefa.progresso }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ tarefa.progresso }}%">
+      <span class="sr-only">{{ tarefa.progresso }}% alcançado</span>
+    </div>
+  </div>
+  <h3>Início em: <span style="margin-left:15px;">{{ tarefa.data_cadastro|date:"j \d\e F \d\e Y" }}</span></h3>
+  {% if tarefa.progresso < 100 and tarefa.previsao_termino %}<h3>Previsão de término no ritmo atual: <span style="margin-left:15px;">{{ tarefa.previsao_termino|date:"j \d\e F \d\e Y" }}</span></h3>{% endif %}
+  {% endlocalize %}
+{% endfor %}
+
+<br/>
+
+<h2>Informações sobre o sistema</h2>
+<hr style="margin:0;"/>
+
+<h3>Tickets em aberto: <span style="margin-left:15px;"><a href="https://github.com/regiov/voluntarios/issues" target="_blank">{{ num_tickets }}</a></span></h3>
+
+<h3>Últimas alterações</h3>
+<ul>
+{% for item in ultimos_commits %}
+  <li>&check; {{ item.commit.author.date|slice:":10" }} ({{ item.commit.author.name }}): {{ item.commit.message }}</li>
+{% endfor %}
+</ul>
+
+<br/>
+<br/>
+<hr style="margin:0;"/>
+			   
+<p class="dica" style="font-weight: 300;">[1] cálculo a partir de 23/05/2020.</p>
+<p class="dica" style="font-weight: 300;">[2] considerando todos voluntários já revisados desde a data da sua primeira revisão.</p>
+<p class="dica" style="font-weight: 300;">[3] cálculo a partir de 14/09/2020.</p>
+
+{% endblock content %}

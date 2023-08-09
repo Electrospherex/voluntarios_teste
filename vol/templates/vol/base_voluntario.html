@@ -1,0 +1,44 @@
+{% extends "vol/base.html" %}
+
+{% block content_container %}
+{% url 'cadastro_usuario' as cadastro_usuario %}
+{% url 'cadastro_voluntario' as cadastro_voluntario %}
+{% url 'termos_de_adesao_de_voluntario' as termos_de_adesao_de_voluntario %}
+<section id="content">
+  <div class="container">
+    <div class="row profile">
+      <div class="col-md-3 col-sm-4">
+	<div class="profile-sidebar">
+	  <!-- SIDEBAR MENU -->
+	  <div class="profile-usermenu">
+	    <ul class="nav">
+	      <li{% if request.path == cadastro_usuario %} class="active"{% endif %}>
+		<a href="{{ cadastro_usuario }}">
+		  <i class="fas fa-user"></i>
+		  Cadastro de usuário </a>
+	      </li>
+	      <li{% if request.path == cadastro_voluntario %} class="active"{% endif %}>
+		<a href="{{ cadastro_voluntario }}">
+		  <i class="fas fa-fist-raised"></i>
+		  Perfil de voluntário <i style="margin-left: 5px; font-size: xx-small;" {% if request.user.voluntario %}{% if request.user.voluntario.aprovado %}class="fas fa-check" title="aprovado">{% else %}class="fas fa-clock" title="aguardando aprovação">{% endif %}{% else %}class="fas fa-empty-set" title="sem perfil">{% endif %}</i></a>
+	      </li>
+	      <li{% if request.path == termos_de_adesao_de_voluntario %} class="active"{% endif %}>
+		<a href="{{ termos_de_adesao_de_voluntario }}">
+		  <i class="fas fa-file"></i>
+		  Termos de adesão </a>
+	      </li>
+	    </ul>
+	  </div>
+	  <!-- END MENU -->
+	</div>
+      </div>
+      <div class="col-md-9 col-sm-8">
+        <div class="profile-content">
+<!--/#inicio-conteudo-->{% block content %}
+{% endblock content %}<!--/#fim-conteudo-->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content_container %}

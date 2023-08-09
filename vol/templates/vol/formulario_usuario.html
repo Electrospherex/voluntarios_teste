@@ -1,0 +1,49 @@
+{% extends request.user.is_voluntario|yesno:"vol/base_voluntario.html,vol/base_nosidebar.html" %}
+
+{% load crispy_forms_tags %}
+{% load i18n %}
+
+{% block head_title %}Cadastro de usuário{% endblock %}
+
+{% block content %}
+
+{% include "vol/mensagens.html" %}
+{% include "vol/erros.html" %}
+
+<h1>Cadastro de usuário</h1>
+
+{% if not request.user.is_voluntario %}
+<p>Este é seu cadastro de usuário. Para criar um Perfil de Voluntário, clique <a href="{% url 'link_voluntario_novo' %}">aqui</a>.</p>
+{% endif %}
+
+<form id="form-usuario" method="post" action="{% url 'cadastro_usuario' %}">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <div class="form-actions">
+  <button class="btn btn-primary" type="submit">Gravar alterações</button>
+  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete">Remover cadastro</button>
+  </div>
+
+  <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+       <div class="modal-content">
+            
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Confirme a remoção</h4>
+          </div>
+            
+          <div class="modal-body">
+            <p>Tem certeza que deseja remover seu cadastro no site?</p>
+          </div>
+                
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+            <input class="btn btn-danger btn-ok" type="submit" name="delete" value="Sim">
+          </div>
+       </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "vol/base_admin.html" %}
+{% load l10n %}
+{% block title %}Revisão de voluntários{% endblock title %}
+
+{% block content %}
+
+<h1 class="margin-bottom">Dinâmica de trabalho nos últimos {{ days|length }} dias</h1>
+
+<p>A tabela abaixo mostra horários e dias em que houve revisão de cadastros de voluntários. Obs: cores mais fortes indicam que mais de uma pessoa trabalhou no mesmo horário.</p>
+
+<div class="table-responsive">
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+	<td style="width:70px;margin-right:5px;">&nbsp;</td>
+	{% for hour in hours %}
+	<th style="width:{% if hour < 8 %}20{% else %}{% if hour > 19 %}25{% else %}30{% endif %}{% endif %}px;font-weight: {% if hour in main_hours %}bold{% else %}normal{% endif %};">{{ hour }}h</th>
+	{% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for day, info in days.items %}
+      <tr{% if info.date|date:"w" in "06" %} style="background-color:#eee;"{% endif %}>
+	<td class="nowrap" style="{% if not info.ok %}color: maroon;font-weight: 500;{% endif %}{% if forloop.last %}border-bottom: 1px solid #ddd;{% endif %}">{{ info.date|date:"D d M" }}</td>
+	{% for hour, revs in info.hours.items %}
+	<td style="background-color:#{% if revs|length > 2 %}ccc{% else %}{% if revs|length > 1 %}ddd{% else %}{% if revs|length > 0 %}eee{% else %}fff{% endif %}{% endif %}{% endif %};{% if hour in main_hours %}border-left: 2px dashed #ccc;{% else %}border-left: 1px solid #eee;{% endif %}{% if forloop.parentloop.last %}border-bottom: 1px solid #ddd;{% endif %}{% if forloop.last %}border-right: 1px solid #ddd;{% endif %}">&nbsp;</td>
+	{% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock content %}

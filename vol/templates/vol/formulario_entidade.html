@@ -1,0 +1,238 @@
+{% extends form.entidade_nova|yesno:"vol/base_nosidebar.html,vol/base_entidade.html" %}
+{% load static %}
+
+{% block title %}Cadastro de Entidade{% endblock title %}
+
+{% block head %}
+
+<script type="text/javascript" src="{% static 'js/jquery.formset.js' %}"></script>
+
+<script type="text/javascript">
+    $(function() {
+        $('.telformset').formset({formCssClass: 'telformset', prefix: 'tel_set', deleteText: 'remover', addText: 'incluir outro'});
+        $('.emailformset').formset({formCssClass: 'emailformset', prefix: 'email_set', deleteCssClass: 'delete-row-distinct', addCssClass: 'add-row-distinct', deleteText: 'remover', addText: 'incluir outro'});
+    });
+
+    // Controle de exibição das observações sobre doações
+    function controla_exibicao_obs_doacoes() {
+        var aceita_doacao = false;
+        $("input[type=checkbox][name=doacoes]").each(function() {
+            if ($(this).is(":checked")) {
+                // Se ao menos um tipo de artigo estiver marcado
+                $("#obs-doacoes").show();
+                aceita_doacao = true;
+                return false;
+            } 
+        });
+        if (!aceita_doacao) {
+            $("#obs-doacoes").hide();
+        }
+    }
+
+    $(document).ready(function () {
+        $("input[type=checkbox][name=doacoes]").each(function() {
+            $(this).change(function() {
+                controla_exibicao_obs_doacoes();
+            });
+        });
+    });
+</script>
+
+{% endblock head %}
+
+{% block content %}
+
+<h1 class="margin-bottom">{% if form.instance.id %}Cadastro de Entidade{% else %}Nova Entidade{% endif %}</h1>
+
+{% include "vol/mensagens.html" %}
+
+{% include "vol/erros.html" %}
+
+{% spaceless %}
+ {% for error in telformset.errors %}
+  {% for msg in error.values %}<p><font face="Verdana" size="2" color="red">{{ msg }}</font></p>{% endfor %}
+ {% endfor %}
+ {% for error in emailformset.errors %}
+  {% for msg in error.values %}<p><font face="Verdana" size="2" color="red">{{ msg }}</font></p>{% endfor %}
+ {% endfor %}
+{% endspaceless %}
+
+<form id="form-entidade" method="POST" action="">{% csrf_token %}
+
+{% include "vol/campo_formulario.html" with campo=form.nome_fantasia required=True %}
+{% include "vol/campo_formulario.html" with campo=form.razao_social required=True %}
+{% include "vol/campo_formulario.html" with campo=form.cnpj required=True %}
+{% include "vol/campo_formulario.html" with campo=form.area_atuacao required=True %}
+{% include "vol/campo_formulario.html" with campo=form.descricao %}
+{% include "vol/campo_formulario.html" with campo=form.num_vol required=True %}
+{% include "vol/campo_formulario.html" with campo=form.num_vol_ano required=True %}
+
+{% include "vol/campo_formulario.html" with campo=form.website %}
+{% include "vol/campo_formulario.html" with campo=form.facebook %}
+{% include "vol/campo_formulario.html" with campo=form.instagram %}
+{% include "vol/campo_formulario.html" with campo=form.twitter %}
+{% include "vol/campo_formulario.html" with campo=form.youtube %}
+
+<fieldset>
+<legend>Responsável</legend>
+{% include "vol/campo_formulario.html" with campo=form.nome_resp required=True %}
+{% include "vol/campo_formulario.html" with campo=form.sobrenome_resp required=True %}
+{% include "vol/campo_formulario.html" with campo=form.cargo_resp required=True %}
+</fieldset>
+
+<fieldset>
+<legend>Endereço</legend>
+{% include "vol/campo_formulario.html" with campo=form.cep required=True %}
+{% include "vol/campo_formulario.html" with campo=form.logradouro required=True %}
+{% include "vol/campo_formulario.html" with campo=form.bairro required=True %}
+{% include "vol/campo_formulario.html" with campo=form.cidade required=True %}
+{% include "vol/campo_formulario.html" with campo=form.estado required=True %}
+</fieldset>
+
+<fieldset>
+<legend>Contato</legend>
+
+<label>* Telefones</label>
+{{ telformset.management_form }}
+<div class="table-responsive form-group required{% if telformset.errors %} has-error{% endif %}">
+<table width="100%" class="table table-condensed">
+ <tr> 
+  <th width="10%">{{ telformset.forms.0.fields.tipo.label }}</th>
+  <th width="10%">{{ telformset.forms.0.fields.prefixo.label }}</th>
+  <th width="80%">{{ telformset.forms.0.fields.numero.label }}</th>
+ </tr>
+ {% for telform in telformset %}
+ <tr class="telformset">
+  <td>{{ telform.id }}{{ telform.tipo }}</td>
+  <td>{{ telform.prefixo }}</td>
+  <td>{{ telform.numero }}{{ telform.DELETE }}</td>
+ </tr>
+ {% endfor %}
+</table>
+</div>
+
+<label>* E-mails</label>
+{{ emailformset.management_form }}
+<div class="table-responsive form-group required{% if emailformset.errors %} has-error{% endif %}">
+<table width="100%" class="table table-condensed">
+ <tr> 
+  <th>{{ emailformset.forms.0.fields.endereco.label }}</th>
+  <th width="100px">{{ emailformset.forms.0.fields.principal.label }}</th>
+ </tr>
+ {% for emailform in emailformset %}
+ <tr class="emailformset">
+  <td>{{ emailform.id }}{{ emailform.endereco }}</td>
+  <td>{{ emailform.principal }}{{ emailform.DELETE }}</td>
+ </tr>
+ {% endfor %}
+</table>
+</div>
+
+{% include "vol/campo_formulario.html" with campo=form.nome_contato %}
+</fieldset>
+
+<fieldset>
+<legend>Artigos aceitos como doação</legend>
+{{ form.doacoes }}
+</fieldset>
+
+{% include "vol/campo_formulario.html" with campo=form.obs_doacoes div_id="obs-doacoes" invisible=form.instance.esconder_obs_doacoes %}
+
+<div class="form-group">
+  <input id="save" class="btn btn-primary" type="submit" name="submit" value="{% if form.instance.id %}Gravar alterações{% else %}Cadastrar{% endif %}">
+  {% if form.instance.id %}
+  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete">Remover</button>
+  {% endif %}
+</div>
+
+{% if form.instance.id %} 
+<div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+            
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Confirme a remoção</h4>
+        </div>
+            
+        <div class="modal-body">
+            <p>Tem certeza que deseja remover esta entidade?</p>
+        </div>
+                
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Não</button>
+            <input class="btn btn-danger btn-ok" type="submit" name="delete" value="Sim">
+        </div>
+     </div>
+  </div>
+</div>
+{% endif %}
+<p class="help-block dica">(*) campos obrigatórios</p>
+</form>
+
+<script type="text/javascript">
+    // Função que retorna os dados de um endereço a partir do CEP 
+    function consultarCEP() {
+        // Declarando o cep
+        // Lembrando que, para a API funcionar, o cep deve estar sem caracteres especiais
+        const cep = document.getElementById('id_cep').value.replace(/\D/g, '');
+
+        // Essa é a url da API da ViaCep
+        const url = `https://viacep.com.br/ws/${cep}/json`;
+
+        // Parâmetros para a requisição da API
+        const options = {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                'content-type': 'application/json;charset=utf-8',
+            }
+        }
+
+        // Fazendo a requisição com fetch
+        fetch(url, options)
+            .then(response => response.json())
+            .then(data => {
+
+                // Mudando os valores de cada dado pertencente ao endereço vinculado ao cep
+                document.getElementById('id_logradouro').value = data.logradouro;
+                document.getElementById('id_bairro').value = data.bairro;
+                document.getElementById('id_cidade').value = data.localidade;
+                document.getElementById('id_estado').value = data.uf;
+            })
+            .catch(erro => console.log(erro))
+    }
+</script>
+
+<script>
+    // Chama a função consultarCEP toda vez que um novo CEP for inserido
+    document.getElementById('id_cep').addEventListener('change', consultarCEP);
+</script>
+
+<script type="text/javascript">
+
+    {% comment %}
+    Simula "input radio" com checkbox dos e-mails.
+    {% endcomment %}
+
+    $("input.input-principal").click(function() {
+        var selected_id = $(this).attr('id');
+        $("input.input-principal").each(function( index ) {
+            if ($(this).attr('id') !== selected_id) {
+                $(this).prop('checked', false);
+            }
+        });
+    });
+
+    {% comment %}
+    Garante que o form seja submetido apenas uma vez, 
+    evitando problemas com o duplo clique 
+    {% endcomment %}
+
+    $("#form-entidade").one("submit", function() {
+        $("#save").prop("disabled", true);
+    });
+
+</script> 
+
+{% endblock content %}

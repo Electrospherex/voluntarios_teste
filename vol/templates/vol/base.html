@@ -1,0 +1,209 @@
+{% load static %}
+{% comment %}
+Bootstrap template utilizado:
+https://shapebootstrap.net/item/1524992-triangle-free-responsive-multipurpose-template
+{% endcomment %}<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% if not debug %}<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">{% endif %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block description %}A melhor maneira de ser voluntário ou de encontrar voluntários, doadores e informações sobre o voluntariado no Brasil.{% endblock description %}">
+    <meta name="keywords" content="voluntariado, voluntário, entidades assistenciais, doações, terceiro setor,">
+    <meta name="author" content="Stephen Kanitz">
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/solid.css" integrity="sha384-r/k8YTFqmlOaqRkZuSiE9trsrDXkh07mRaoGBMoDcmA58OHILZPsk29i2BsFng1B" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/brands.css" integrity="sha384-BKw0P+CQz9xmby+uplDwp82Py8x1xtYPK3ORn/ZSoe6Dk3ETP59WCDnX+fI1XCKK" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/fontawesome.css" integrity="sha384-4aon80D8rXCGx9ayDt85LbyUHeMWd3UiBaWliBlJ53yzm9hqN21A+o1pqoyK04h+" crossorigin="anonymous">
+
+    {% comment %}main.css é o estilo original que veio com template. Ao invés de alterá-lo, melhor sobrepor as regras desejadas utilizando o arquivo vol-versao.css{% endcomment %}
+    <link href="{% static 'css/main-3.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+
+    <link href="{% static 'css/vol-2.8.css' %}" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+      {% comment %}This script is the defacto way to enable use 
+      of HTML5 sectioning elements in legacy Internet Explorer.{% endcomment %}
+      <script src="{% static 'js/html5shiv.js' %}"></script>
+      {% comment %}A fast & lightweight polyfill for 
+      min/max-width CSS3 Media Queries (for IE 6-8, and more).{% endcomment %}
+      <script src="{% static 'js/respond.min.js' %}"></script>
+    <![endif]-->       
+
+    <link rel="shortcut icon" href="{% static 'images/ico/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{% static 'images/ico/apple-icon-57x57.png' %}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{% static 'images/ico/apple-icon-60x60.png' %}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{% static 'images/ico/apple-icon-72x72.png' %}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'images/ico/apple-icon-76x76.png' %}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{% static 'images/ico/apple-icon-114x114.png' %}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{% static 'images/ico/apple-icon-120x120.png' %}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{% static 'images/ico/apple-icon-144x144.png' %}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{% static 'images/ico/apple-icon-152x152.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/ico/apple-icon-180x180.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/ico/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="194x194" href="{% static 'images/ico/favicon-194x194.png' %}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{% static 'images/ico/favicon-96x96.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/ico/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="36x36" href="{% static 'images/ico/android-icon-36x36.png' %}">
+    <link rel="icon" type="image/png" sizes="48x48" href="{% static 'images/ico/android-icon-48x48.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/ico/android-icon-192x192.png' %}">
+    <link rel="manifest" href="{% static 'images/manifest.json' %}">
+    <meta name="msapplication-TileColor" content="#dce9d4">
+    <meta name="msapplication-TileImage" content="{% static 'images/ico/mstile-144x144.png' %}">
+    <meta name="theme-color" content="#ffffff">
+
+    <script type="text/javascript" src="{% static 'js/jquery-3.5.1.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}" defer></script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}"></script>   
+
+{% block head %}
+{% endblock head %}
+
+    <title>{% block title %}Voluntários{% endblock title %}</title>
+
+</head>
+
+<body>
+{% block body %}
+    {% block content_header %}
+    <header id="header">
+
+        <div id="pre-navbar" class="navbar navbar-inverse">
+            <div id="pre-navbar-container" class="container">
+                   <div class="social-icons pull-right">
+                        <ul class="nav nav-pills">
+                            {% if user.is_authenticated %}<li><span style="white-space: nowrap;"><a href="{% url 'cadastro_usuario' %}" style="margin-right: 5px;" title="Alterar cadastro">{{ user.get_short_name }}</a> <a href="{% url 'account_logout' %}" title="Sair"><i class="fas fa-sign-out-alt"></i></a></span></li>{% else %}<li><span style="white-space: nowrap;"><a href="{% url 'account_login' %}">Olá! Quem é você? <i class="fas fa-sign-in-alt" title="Identificar-se no sistema"></i></a></span></li>{% endif %}
+                        </ul>
+                   </div>
+            </div>
+        </div>
+
+        <div class="navbar navbar-inverse" role="banner">
+            <div id="navbar-container" class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Menu de navegação</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <a class="navbar-brand" href="/">
+                    	<table><tr><td class="logo-img"><img src="{% static '/images/logo.png' %}" alt="logo"><td><table class="hidden-sm hidden-xs"><tr><td class="logo-cell"><img src="{% static '/images/nome.png' %}" alt="Voluntários"></td></tr></table></td></tr></table>
+                    </a>
+                    
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if user.is_staff %}<li class="dropdown"><a href="{% url 'painel' %}">Painel</a></li>{% endif %}
+                        <li class="dropdown"><a href="#">Sobre <i class="fa fa-angle-down"></i></a>
+                            <ul role="menu" class="sub-menu">
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='quem-somos/' %}">Quem somos</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='nossa-historia/' %}">Nossa história</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='voluntariado/' %}">O que é voluntariado</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown"><a href="#">Voluntários <i class="fa fa-angle-down"></i></a>
+                            <ul role="menu" class="sub-menu">
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='por-que-ser-voluntario/' %}">Por que ser voluntário</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='bom-voluntario/' %}">Como ser um bom voluntário</a></li>
+                                <li>{% if user.is_authenticated and user.is_voluntario %}<a href="{% url 'cadastro_voluntario' %}" rel="nofollow">Gerencie seu perfil de voluntário</a>{% else %}<a href="{% url 'link_voluntario_novo' %}" rel="nofollow">Cadastre-se como voluntário</a>{% endif %}</li>
+                                <li><a href="{% url 'busca_entidades' %}">Encontre uma entidade</a></li>
+                                <li><a href="{% url 'mapa_entidades' %}">Mapa de entidades</a></li>
+                                <li><a href="{% url 'busca_doacoes' %}">Pedidos de doação</a></li>
+                            </ul>
+                        </li>                  
+                        <li class="dropdown"><a href="#">Entidades <i class="fa fa-angle-down"></i></a>
+                            <ul role="menu" class="sub-menu">
+                                <li>{% if user.is_authenticated and user.has_entidade %}<a href="{% url 'cadastro_entidade' %}" rel="nofollow">Gerencie suas entidades</a>{% else %}<a href="{% url 'link_entidade_nova' %}" rel="nofollow">Cadastre sua entidade</a>{% endif %}</li>
+                                <li><a href="{% url 'busca_entidades' %}">Busca de entidades</a></li>
+                                <li><a href="{% url 'busca_voluntarios' %}" rel="nofollow">Encontre voluntários</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='leis/' %}">Leis</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown"><a href="#">Mais <i class="fa fa-angle-down"></i></a>
+                            <ul role="menu" class="sub-menu">
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='documentos/' %}">Modelos de documentos</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='estatisticas/' %}">Estatísticas do setor</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='personalidades/' %}">Personalidades voluntárias</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='livros-voluntariado/' %}">Livros sobre voluntariado</a></li>
+                                <li><a href="{% url 'django.contrib.flatpages.views.flatpage' url='livros-terceiro-setor/' %}">Livros sobre Terceiro Setor</a></li>
+                                <li><a href="{% url 'blog' %}">Blog</a></li>
+                            </ul>
+                        </li>                         
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% endblock content_header %}
+
+{% block content_container %}
+    <section id="content">
+        <div class="container">
+            <div class="row">
+                <div class="{% block container_class %}col-md-9 col-sm-8{% endblock container_class %}">
+<!--/#inicio-conteudo-->{% block content %}
+{% endblock content %}<!--/#fim-conteudo-->
+                </div>
+{% block sidebar %}
+                <div class="col-md-3 col-sm-4" style="margin-top:20px;">
+                    <div class="sidebar portfolio-sidebar">
+                        <div class="sidebar-item categories">
+                            <h3>Novas entidades cadastradas</h3>
+                            <ul class="nav navbar-stacked">
+                                {% for er in entidades_recentes %}
+                                {% if er.website != "https://voluntarios.com.br" %}
+                                <li><a href="{% url 'exibe_entidade' er.id %}">{{ er.menor_nome }}<br><span class="dica">{% if er.cidade and er.estado %}({{ er.cidade }}-{{ er.estado }}){% endif %}</span></a></li>
+                                {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="sidebar-item  recent">
+                            <h3>Pedidos recentes de serviço ou doação</h3>
+                            {% for pedido in pedidos_recentes %}
+                            <div class="media">
+                                <div>
+                                  <a href="{% url 'exibe_entidade' pedido.entidade.id %}">{{ pedido.entidade.menor_nome }} ({{ pedido.entidade.cidade }}-{{ pedido.entidade.estado }})</a>
+                                </div>
+                                <div class="pull-left">
+                                    <a href="{% url 'exibe_entidade' pedido.entidade.id %}">{{ pedido.qtde_orig|default:'1' }}</a>
+                                </div>
+                                <div class="media-body">
+                                    <h4><a href="{% url 'exibe_entidade' pedido.entidade.id %}">{{ pedido.descricao }}</a></h4>
+                                    <p>publicado em {{ pedido.data_solicitacao|date:'j F' }} de {{ pedido.data_solicitacao|date:'Y' }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+{% endblock sidebar %}
+            </div>
+        </div>
+    </section>
+{% endblock content_container %}
+
+    {% block content_footer %}
+    <footer id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="copyright-text text-center">
+                        <p><a href="mailto:{{ EMAIL_CONTATO }}">{{ EMAIL_CONTATO }}</a></p>
+                        <p><a href="{% url 'django.contrib.flatpages.views.flatpage' url='termos-de-uso/' %}">Termos de Uso</a> - <a href="{% url 'django.contrib.flatpages.views.flatpage' url='politica-de-privacidade/' %}">Política de Privacidade</a></p>
+			<p><a href="https://www.facebook.com/Voluntarioscombr-110573820784410" target="_blank" title="Facebook"><i class="fab fa-facebook" style="margin-left:10px; color:#395693"></i></a><a href="https://www.instagram.com/voluntarios_br/" target="_blank" title="Instagram"><i class="fab fa-instagram" style="margin-left:10px;"></i></a><a href="https://twitter.com/Voluntarios_BR" target="_blank" title="Twitter"><i class="fab fa-twitter" style="margin-left:10px; color:#1DA1F2;"></i></a><a href="https://www.youtube.com/channel/UCbz1zKdwVYz99qTyNn2F_Bw" target="_blank" title="youtube"><i class="fab fa-youtube" style="margin-left:10px; color:red;"></i></a><a href="https://www.linkedin.com/groups/8971714/" target="_blank" title="linkedin"><i class="fab fa-linkedin" style="margin-left:10px; color:#0072AE;"></i></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    {% endblock content_footer %}
+{% block post_footer %}
+{% endblock post_footer %}
+{% endblock body %}
+</body>
+</html>

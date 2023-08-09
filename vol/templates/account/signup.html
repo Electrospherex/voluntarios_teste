@@ -1,0 +1,53 @@
+{% extends "account/base.html" %}
+{% load crispy_forms_tags %}
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block title %}{% trans "Signup" context "page title" %}{% endblock %}
+
+{% block account_content %}
+{% get_providers as socialaccount_providers %}
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1>{% trans "Sign Up" context "page heading" %}</h1>
+
+      <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}
+	{% if socialaccount_providers %}<br/>Não possui cadastro? Use uma das redes sociais para não ter que criar uma senha, ou preencha o formulário abaixo.{% endif %}
+      </p>
+    </div>
+    <div class="modal-body">
+      {% if socialaccount_providers %}
+
+      {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+
+      {% include "socialaccount/snippets/login_extra.html" %}
+
+      <p style="text-align: center; margin:20px;">ou</p>
+      {% endif %}
+      <div class="container-fluid" style="text-align: -webkit-center;">
+        <form id="signup_form" method="post" action="{% url 'account_signup' %}" style="display: block; width: 90%; text-align: initial;">
+          {% csrf_token %}
+          {{ form|crispy }}
+          {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+          <div class="form-actions">
+            <button id="signup-btn" class="btn btn-primary" type="submit">{% trans "Sign Up" context "submit button" %}</button>
+          </div>
+        </form>
+      </div>
+{% comment %}
+Garante que o form seja submetido apenas uma vez, 
+evitando problemas com o duplo clique 
+(duplicate key value violates unique constraint vol_usuario_email_key).
+{% endcomment %}
+    <script>
+    $("#signup_form").one("submit", function() {
+        $("#signup-btn").prop("disabled", true);
+    });
+    </script>
+    </div>
+  </div>
+</div>
+{% endblock %}
